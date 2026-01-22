@@ -19,10 +19,14 @@ struct MenuView: View {
         Divider().padding([.top, .bottom], 3)
       }
 
-      if state.daemonRegistration == .enabled && !state.nonHiddenInterfaces.isEmpty {
+      let randomizableInterfaces = state.nonHiddenInterfaces.filter {
+        state.config.arbiter($0.hardMAC).action == .random
+      }
+
+      if state.daemonRegistration == .enabled && !randomizableInterfaces.isEmpty {
         Button("Re-randomize All") {
           Log.debug("Force rerandomization for all interfaces")
-          Config.Writer(state).resetExceptionAddresses(interfaces: state.nonHiddenInterfaces)
+          Config.Writer(state).resetExceptionAddresses(interfaces: randomizableInterfaces)
         }.buttonStyle(.accessoryBar)
       }
 
