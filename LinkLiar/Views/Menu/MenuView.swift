@@ -7,10 +7,6 @@ struct MenuView: View {
   @State var observer: NSKeyValueObservation?
   @Environment(LinkState.self) private var state
 
-  @State var selectedItem: String = ""
-  @State var items = ["One", "Two"]
-  @State var isHovering = false
-
   var body: some View {
     VStack {
       RegisterDaemonView().environment(state)
@@ -21,6 +17,17 @@ struct MenuView: View {
 
       if !state.nonHiddenInterfaces.isEmpty {
         Divider().padding([.top, .bottom], 3)
+      }
+
+      let randomizableInterfaces = state.nonHiddenInterfaces.filter {
+        state.config.arbiter($0.hardMAC).action == .random
+      }
+
+      if state.daemonRegistration == .enabled && !randomizableInterfaces.isEmpty {
+        Button("Re-randomize All") {
+          Log.debug("Force rerandomization for all interfaces")
+          Config.Writer(state).resetExceptionAddresses(interfaces: randomizableInterfaces)
+        }.buttonStyle(.accessoryBar)
       }
 
       HStack {

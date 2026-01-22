@@ -6,6 +6,9 @@ import Foundation
 
 extension Config {
   struct Writer {
+    private enum Constants {
+      static let pollDelayMilliseconds = [100, 300, 500, 700]
+    }
     // MARK: Class Methods
 
     init(_ state: LinkState) {
@@ -53,7 +56,22 @@ extension Config {
       // the address was changed (it doesn't trigger a network condition change or config file change).
       // So we resort to polling, to give the user visual feedback about the successful change.
       // Less than a second should be enough to have detected the change.
-      for millisecond in [100, 300, 500, 700] {
+      for millisecond in Constants.pollDelayMilliseconds {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(millisecond)) {
+          NotificationCenter.default.post(name: .manualTrigger, object: nil)
+        }
+      }
+    }
+
+    func resetExceptionAddresses(interfaces: [Interface]) {
+      var newDictionary = Config.Builder(state.configDictionary).resetExceptionAddresses(interfaces)
+
+      newDictionary[Config.Key.version.rawValue] = state.version.formatted
+      if JSONWriter(Paths.configFile).write(newDictionary) {
+        state.configDictionary = newDictionary
+      }
+
+      for millisecond in Constants.pollDelayMilliseconds {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(millisecond)) {
           NotificationCenter.default.post(name: .manualTrigger, object: nil)
         }
