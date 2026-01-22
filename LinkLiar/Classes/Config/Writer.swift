@@ -60,6 +60,21 @@ extension Config {
       }
     }
 
+    func resetExceptionAddresses(interfaces: [Interface]) {
+      var newDictionary = Config.Builder(state.configDictionary).resetExceptionAddresses(interfaces)
+
+      newDictionary[Config.Key.version.rawValue] = state.version.formatted
+      if JSONWriter(Paths.configFile).write(newDictionary) {
+        state.configDictionary = newDictionary
+      }
+
+      for millisecond in [100, 300, 500, 700] {
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(millisecond)) {
+          NotificationCenter.default.post(name: .manualTrigger, object: nil)
+        }
+      }
+    }
+
     // MARK: Vendors
 
     func addVendor(_ vendor: Vendor) {

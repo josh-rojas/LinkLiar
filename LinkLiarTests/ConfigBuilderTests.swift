@@ -255,7 +255,33 @@ class ConfigBuilderTests: XCTestCase {
   //    XCTAssertEqual(expected as NSDictionary, output as NSDictionary)
   //  }
   //
-  //  // MARK: addVendor
+  // MARK: resetExceptionAddresses
+
+  func testResetExceptionAddresses() {
+    let input = [
+      "e1:e1:e1:e1:e1:e1":
+        ["action": "random",
+         "except": "aa:aa:aa:aa:aa:aa"]
+    ]
+    let interfaceA = Interface(bsd: BSD("en0")!,
+                               hardMAC: MAC("e1:e1:e1:e1:e1:e1")!,
+                               stubSoftMAC: MAC("bb:bb:bb:bb:bb:bb"))!
+    let interfaceB = Interface(bsd: BSD("en1")!,
+                               hardMAC: MAC("e2:e2:e2:e2:e2:e2")!,
+                               stubSoftMAC: MAC("cc:cc:cc:cc:cc:cc"))!
+    let output = Config.Builder(input).resetExceptionAddresses([interfaceA, interfaceB])
+
+    let expected = [
+      "e1:e1:e1:e1:e1:e1":
+        ["action": "random",
+         "except": "bb:bb:bb:bb:bb:bb"],
+      "e2:e2:e2:e2:e2:e2":
+        ["except": "cc:cc:cc:cc:cc:cc"]
+    ]
+    XCTAssertEqual(expected as NSDictionary, output as NSDictionary)
+  }
+
+  // MARK: addVendor
 
   func testAddVendor() {
     let input = [

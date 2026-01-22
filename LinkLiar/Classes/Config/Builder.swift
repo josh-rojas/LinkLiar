@@ -117,6 +117,16 @@ extension Config {
       return dictionary
     }
 
+    func resetExceptionAddresses(_ interfaces: [Interface]) -> [String: Any] {
+      var dictionary = configDictionary
+
+      for interface in interfaces {
+        dictionary = Config.Builder(dictionary).resetExceptionAddress(interface)
+      }
+
+      return dictionary
+    }
+
     func addInterfaceSsid(_ hardMAC: MAC?, accessPointPolicy: AccessPointPolicy) -> [String: Any] {
       guard let hardMAC = hardMAC else { return configDictionary }
       var dictionary = configDictionary

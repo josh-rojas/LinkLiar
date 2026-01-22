@@ -17,7 +17,7 @@ If you star this project (by clicking on ✭ in the top-right corner), you help 
 
 ## Requirements
 
-* macOS Sierra (10.12) or later (see [releases](https://github.com/halo/LinkLiar/releases) for older versions).
+* macOS Tahoe (15.0) or later.
 * Administrator privileges (you will be asked for your root password *once*).
 
 ## Installation
