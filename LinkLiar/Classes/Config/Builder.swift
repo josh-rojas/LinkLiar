@@ -118,13 +118,17 @@ extension Config {
     }
 
     func resetExceptionAddresses(_ interfaces: [Interface]) -> [String: Any] {
-      var dictionary = configDictionary
+      var builder = self
 
       for interface in interfaces {
-        dictionary = Config.Builder(dictionary).resetExceptionAddress(interface)
+        builder.resetExceptionAddressInPlace(interface)
       }
 
-      return dictionary
+      return builder.configDictionary
+    }
+
+    private mutating func resetExceptionAddressInPlace(_ interface: Interface) {
+      configDictionary = resetExceptionAddress(interface)
     }
 
     func addInterfaceSsid(_ hardMAC: MAC?, accessPointPolicy: AccessPointPolicy) -> [String: Any] {

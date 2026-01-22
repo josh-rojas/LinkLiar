@@ -68,7 +68,8 @@ extension Config {
         state.configDictionary = newDictionary
       }
 
-      for millisecond in [100, 300, 500, 700] {
+      let pollDelayMilliseconds = [100, 300, 500, 700]
+      for millisecond in pollDelayMilliseconds {
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + .milliseconds(millisecond)) {
           NotificationCenter.default.post(name: .manualTrigger, object: nil)
         }
